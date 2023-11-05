@@ -1,0 +1,5 @@
+openai
+streamlit
+streamlit_echarts
+PyJWT
+streamlit_feedback

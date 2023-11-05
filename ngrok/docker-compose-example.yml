@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  tu-aplicacion:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SECRET_KEYS=your-jwt-secret-keys
+      - MONGO_URI=your-mongo-uri
+    # Development
+    volumes:
+      - .:/app            
+    networks:
+      - app_network
+
+  ngrok:
+    image: ngrok/ngrok
+    container_name: ngrok
+    depends_on:
+      - tu-aplicacion
+    environment:
+      - NGROK_AUTHTOKEN=your-ngrok-auth-token
+    command: tunnel --label edge=your_edge_url http://tu-aplicacion:8080
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    external: false
