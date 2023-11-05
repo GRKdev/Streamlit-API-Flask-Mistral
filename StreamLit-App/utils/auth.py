@@ -46,15 +46,11 @@ def check_password():
             st.secrets["passwords"][username],
         ):
             st.session_state["password_correct"] = True
-            st.session_state[
-                "user"
-            ] = username  # Guardar el username para uso posterior.
-            st.session_state["token"] = token_manager.get_token(
-                username
-            )  # Guardar el token en el estado de la sesión
+            st.session_state["user"] = username
+            st.session_state["token"] = token_manager.get_token(username)
         else:
             st.session_state["password_correct"] = False
-            st.error("😕 User not known or password incorrect")
+            st.error("Usuario desconocido o Contraseña incorrecta.", icon="⚠️")
 
     if st.session_state.get("password_correct"):
         return True

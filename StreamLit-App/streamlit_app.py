@@ -19,4 +19,4 @@ if "user" in st.session_state and st.session_state["user"]:
     logo()
     chat_bot(st.session_state["user"])
 else:
-    st.write("User not authenticated or session state 'user' not set.")
+    st.write("Usuario no autenticado o estado de sesión 'user' no establecido.")

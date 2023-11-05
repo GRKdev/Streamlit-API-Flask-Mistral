@@ -40,15 +40,24 @@ def clear_chat_history():
 def display_sidebar_info():
     if "user" in st.session_state:
         user = st.session_state["user"]
-        st.sidebar.markdown(f"**Usuari:** {user.title() }")
+        if user == "admin" or user == "direccio":
+            st.sidebar.markdown(f"👑 **Administrador**: {user.title()}")
+        else:
+            st.sidebar.markdown(f"**Usuari:** {user.title()}")
 
     if st.sidebar.button("Cerrar sesión"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         st.experimental_rerun()
-    option = st.sidebar.selectbox(
-        " ", ("Ejemplos", "Clientes", "Artículos", "Albaranes", "Finanzas", "Otros")
-    )
+
+    if user == "admin" or user == "direccio":
+        option = st.sidebar.selectbox(
+            " ", ("Ejemplos", "Clientes", "Artículos", "Albaranes", "Finanzas", "Otros")
+        )
+    else:
+        option = st.sidebar.selectbox(
+            " ", ("Ejemplos", "Clientes", "Artículos", "Albaranes", "Otros")
+        )
 
     if option == "Clientes":
         lines = [

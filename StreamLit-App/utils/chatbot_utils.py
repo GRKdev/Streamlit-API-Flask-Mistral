@@ -26,6 +26,11 @@ OPENAI_MODEL_35 = st.secrets.get("OPENAI_MODEL_35", os.getenv("OPENAI_MODEL_35")
 model_name = st.secrets["OPENAI_MODEL_35"].split(":")[3].upper()
 
 
+HELICONE_AUTH = st.secrets.get("HELICONE_AUTH", os.getenv("HELICONE_AUTH"))
+
+last_assistant_response = None
+
+
 def set_api_base(model_name):
     if model_name == "ask_fine_tuned":
         openai.api_base = "https://oai.hconeai.com/v1"
@@ -36,18 +41,13 @@ def set_api_base(model_name):
         openai.api_base = "https://oai.hconeai.com/v1"
 
 
-HELICONE_AUTH = st.secrets.get("HELICONE_AUTH", os.getenv("HELICONE_AUTH"))
-user = st.session_state["user"]
-HELICONE_SESSION = (
-    user + "-" + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
-)
-
-last_assistant_response = None
-
-
 def ask_fine_tuned_api(prompt):
     set_api_base("ask_fine_tuned")
-
+    HELICONE_SESSION = (
+        st.session_state["user"].title()
+        + "-"
+        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    )
     response = openai.Completion.create(
         engine=OPEN_AI_MODEL,
         prompt=prompt,
@@ -74,7 +74,11 @@ def ask_fine_tuned_api(prompt):
 
 def ask_gpt(prompt, placeholder, additional_context=None):
     set_api_base("ask_gpt")
-
+    HELICONE_SESSION = (
+        st.session_state["user"].title()
+        + "-"
+        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    )
     global last_assistant_response
 
     messages_list = [
@@ -121,7 +125,11 @@ def ask_gpt(prompt, placeholder, additional_context=None):
 
 def ask_gpt_ft(prompt, placeholder, additional_context=None):
     set_api_base("ask_gpt_ft")
-
+    HELICONE_SESSION = (
+        st.session_state["user"].title()
+        + "-"
+        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    )
     global last_assistant_response
     messages_list = [
         {
@@ -130,7 +138,7 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
         },
         {
             "role": "system",
-            "content": "Si obtienes 'error' formula una respuesta en base al error y el promp del User. Si el resultado del error es None, IGNÓRALO, si te piden más informació aporta lo que tú también sepas en tu conocimiento.",
+            "content": "Si obtienes 'error' formula una respuesta en base al error y el promp del User. Si te piden más informació aporta lo que tú también sepas en tu conocimiento. el email de soporte es: suport@iand.dev",
         },
     ]
     if last_assistant_response:
@@ -143,7 +151,8 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
 
     if additional_context:
         api_error = additional_context.get("api_error")
-        messages_list.append({"role": "system", "content": f"Error: {api_error}"})
+        if api_error is not None:
+            messages_list.append({"role": "system", "content": f"Error: {api_error}"})
 
     messages_list.append({"role": "user", "content": prompt})
 

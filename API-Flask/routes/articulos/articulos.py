@@ -39,7 +39,7 @@ def get_articulos():
             if not value:
                 break
 
-            if param in ["price_buy", "code_buy"] and not is_admin(request):
+            if param in ["price_cost", "code_cost"] and not is_admin(request):
                 return jsonify({"error": "Acceso restringido"}), 403
 
             results = function(value)

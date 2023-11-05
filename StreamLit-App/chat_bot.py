@@ -96,19 +96,14 @@ def chat_bot(username=None):
                         icon="⛔",
                     )
                     return
-                elif response.status_code in [
-                    400,
-                    404,
-                    500,
-                ]:
-                    st.error(
-                        f"Error {response.status_code}: {response.reason}",
-                        icon="⚠️",
-                    )
+            except requests.exceptions.RequestException as e:
+                if isinstance(
+                    e, requests.exceptions.HTTPError
+                ) and e.response.status_code in [400, 404, 500]:
+                    response = e.response
+                else:
+                    st.warning("Error de conexión API con endpoint", icon="🔧")
                     return
-            except requests.exceptions.RequestException:
-                st.warning("Error de conexión API con endpoint", icon="🔧")
-                return
             except Exception as e:
                 st.error(f"Ha ocurrido un error inesperado: {e}", icon="🔧")
                 return
