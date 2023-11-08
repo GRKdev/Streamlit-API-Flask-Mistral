@@ -1,4 +1,5 @@
 import streamlit as st
+from openai import OpenAI
 import openai
 import os
 import re
@@ -18,6 +19,16 @@ from utils.chart_utils import (
     render_grouped_bar_chart_ing_cli_3_years,
 )
 
+from pymongo import MongoClient
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import MongoDBAtlasVectorSearch
+
+# from langchain.llms import OpenAI
+from langchain.chains import RetrievalQA
+from langchain.prompts import PromptTemplate
+from langchain.callbacks.base import BaseCallbackHandler
+from langchain.chat_models import ChatOpenAI
+
 
 OPEN_AI_MODEL = st.secrets.get("OPENAI_MODEL", os.getenv("OPENAI_MODEL"))
 model_name_ft = st.secrets["OPENAI_MODEL"].split(":")[3].upper()
@@ -30,35 +41,44 @@ HELICONE_AUTH = st.secrets.get("HELICONE_AUTH", os.getenv("HELICONE_AUTH"))
 
 last_assistant_response = None
 
+client = OpenAI()
 
-def set_api_base(model_name):
-    if model_name == "ask_fine_tuned":
-        openai.api_base = "https://oai.hconeai.com/v1"
-    elif model_name == "ask_gpt":
-        openai.api_base = "https://oai.hconeai.com/v1"
-        # openai.api_base = "http://localhost:1234/v1"
-    else:
-        openai.api_base = "https://oai.hconeai.com/v1"
+
+# def set_api_base(ask_name):
+#     if ask_name == "ask_fine_tuned":
+#         openai.api_base = "https://oai.hconeai.com/v1"
+
+#     elif ask_name == "ask_gpt":
+#         openai.api_base = "https://oai.hconeai.com/v1"
+#         # openai.api_base = "http://localhost:1234/v1"
+
+#     elif ask_name == "ask_gpt_ft":
+#         openai.api_base = "http://localhost:1234/v1"
+
+#     elif ask_name == "ask_langchain":
+#         openai.api_base = "http://localhost:1234/v1"
 
 
 def ask_fine_tuned_api(prompt):
-    set_api_base("ask_fine_tuned")
+    # set_api_base("ask_fine_tuned")
+
     HELICONE_SESSION = (
         st.session_state["user"].title()
         + "-"
         + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
     )
-    response = openai.Completion.create(
-        engine=OPEN_AI_MODEL,
+
+    response = client.completions.create(
+        model=OPEN_AI_MODEL,
         prompt=prompt,
         max_tokens=50,
         n=1,
         stop="&&",
         temperature=0,
-        headers={
-            "Helicone-Auth": HELICONE_AUTH,
-            "Helicone-Property-Session": HELICONE_SESSION,
-        },
+        # headers={
+        #     "Helicone-Auth": HELICONE_AUTH,
+        #     "Helicone-Property-Session": HELICONE_SESSION,
+        # },
     )
     api_response = response.choices[0].text.strip()
 
@@ -73,9 +93,10 @@ def ask_fine_tuned_api(prompt):
 
 
 def ask_gpt(prompt, placeholder, additional_context=None):
-    set_api_base("ask_gpt")
+    # set_api_base("ask_gpt")
+    user_program = st.session_state["user"].title()
     HELICONE_SESSION = (
-        st.session_state["user"].title()
+        user_program
         + "-"
         + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
     )
@@ -99,8 +120,14 @@ def ask_gpt(prompt, placeholder, additional_context=None):
 
     request_id = str(uuid.uuid4())
 
-    for response in openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    openai.base_url = "https://oai.hconeai.com/v1"
+    openai.default_headers = {
+        "Helicone-Auth": HELICONE_AUTH,
+        "Helicone-Property-Session": HELICONE_SESSION,
+        "Helicone-Request-Id": request_id,
+    }
+    stream = openai.chat.completions.create(
+        model="gpt-3.5-turbo-1106",
         # model="local-mode",
         messages=messages_list,
         max_tokens=1000,
@@ -108,23 +135,21 @@ def ask_gpt(prompt, placeholder, additional_context=None):
         stop=None,
         temperature=0,
         stream=True,
-        headers={
-            "Helicone-Auth": HELICONE_AUTH,
-            "Helicone-Property-Session": HELICONE_SESSION,
-            "Helicone-Request-Id": request_id,
-        },
-    ):
-        full_response += response.choices[0].delta.get("content", "")
+        user=user_program,
+    )
+    for part in stream:
+        content = part.choices[0].delta.content or ""
+        full_response += content
         placeholder.markdown(full_response + "▌")
-    placeholder.markdown(full_response)
 
+    placeholder.markdown(full_response)
     last_assistant_response = full_response.strip()
 
     return last_assistant_response, request_id
 
 
 def ask_gpt_ft(prompt, placeholder, additional_context=None):
-    set_api_base("ask_gpt_ft")
+    # set_api_base("ask_gpt_ft")
     HELICONE_SESSION = (
         st.session_state["user"].title()
         + "-"
@@ -159,27 +184,23 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
     full_response = ""
     request_id = str(uuid.uuid4())
 
-    for response in openai.ChatCompletion.create(
+    stream = client.chat.completions.create(
         model=OPENAI_MODEL_35,
         messages=messages_list,
         max_tokens=1000,
-        n=1,
-        stop=None,
-        temperature=1,
+        temperature=0,
         stream=True,
-        headers={
-            "Helicone-Auth": HELICONE_AUTH,
-            "Helicone-Property-Session": HELICONE_SESSION,
-            "Helicone-Request-Id": request_id,
-        },
-    ):
-        full_response += response.choices[0].delta.get("content", "")
-        placeholder.markdown(full_response + "▌")
-    placeholder.markdown(full_response)
+    )
 
+    for part in stream:
+        content = part.choices[0].delta.content or ""
+        full_response += content
+        placeholder.markdown(full_response + "▌")
+
+    placeholder.markdown(full_response)
     last_assistant_response = full_response.strip()
 
-    return last_assistant_response, request_id
+    return last_assistant_response
 
 
 def generate_response_from_mongo_results(data):
@@ -274,7 +295,7 @@ def handle_gpt_ft_message(
     additional_context = {
         "api_error": response.json()["error"] if "api/" in api_response_url else None,
     }
-    gpt_response, request_id = ask_gpt_ft(
+    gpt_response = ask_gpt_ft(
         user_input, message_placeholder, additional_context=additional_context
     )
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_response})
@@ -282,4 +303,95 @@ def handle_gpt_ft_message(
         f"<div style='text-align:right; color:red; font-size:small;'>⚠️ Modelo: GPT-3.5-{model_name}. Los datos pueden ser erróneos.</div>",
         unsafe_allow_html=True,
     )
-    display_feedback_buttons(request_id)
+    # display_feedback_buttons(request_id)
+
+
+class StreamlitCallbackHandler(BaseCallbackHandler):
+    def __init__(self, container, initial_text=""):
+        self.container = container
+        self.text = initial_text
+
+    def on_llm_new_token(self, token: str, **kwargs):
+        self.text += token
+        self.container.markdown(self.text)
+
+
+def ask_langchain(prompt, placeholder):
+    HELICONE_SESSION = (
+        st.session_state["user"].title()
+        + "-"
+        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    )
+    client = MongoClient(st.secrets.get("MONGO_URI"))
+    dbName = "langchain"
+    collectionName = "collection_of_text_blobs"
+    try:
+        # This line checks if you can connect to the MongoDB database
+        client.server_info()
+    except Exception as e:
+        print("There was an error connecting to MongoDB:", e)
+        return None  # or handle the error as appropriate for your application
+
+    collection = client[dbName][collectionName]
+
+    openai_api_key = st.secrets.get("OPENAI_API_KEY")
+
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+
+    vectorstore = MongoDBAtlasVectorSearch(collection, embeddings)
+
+    qa_retriever = vectorstore.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": 1},
+    )
+    # request_id = str(uuid.uuid4())
+
+    prompt_template = f"""
+    Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
+    Darás una respuesta clara y concisa con la información del contexto (context) y la pregunta (question) del usuario. No usarás fuentes externas, si no
+    sabes la respuesta, contesta "No lo sé" educadamente. Si necesitan más ayuda el email de soporte es: suport@iand.dev.
+
+    Context: {{context}}
+
+    Question: {{question}}
+
+    Answer: 
+    """
+    PROMPT = PromptTemplate(
+        template=prompt_template, input_variables=["context", "question"]
+    )
+
+    qa = RetrievalQA.from_chain_type(
+        llm=ChatOpenAI(
+            model="gpt-3.5-turbo-1106",
+            streaming=True,
+            callbacks=[StreamlitCallbackHandler(placeholder)],
+            temperature=0,
+            openai_api_base="https://oai.hconeai.com/v1",
+            # openai_api_base="http://localhost:1234/v1",
+            # headers={
+            #     "Helicone-Auth": HELICONE_AUTH,
+            #     "Helicone-Property-Session": HELICONE_SESSION,
+            #     "Helicone-Request-Id": request_id,
+            # },
+        ),
+        chain_type="stuff",
+        retriever=qa_retriever,
+        chain_type_kwargs={"prompt": PROMPT},
+    )
+    response = qa(prompt)
+
+    return (response,)
+
+
+def handle_langchain_response(user_input, message_placeholder):
+    message_placeholder.empty()
+    response = ask_langchain(user_input, message_placeholder)
+    response_content = response["result"]
+
+    st.markdown(
+        f"<div style='text-align:right; color:yellow; font-size:small;'>📝 Modelo: Documentación LangChain. Los datos pueden ser erróneos.</div>",
+        unsafe_allow_html=True,
+    )
+    st.session_state.chat_history.append({"role": "DOC", "content": response_content})
+    # display_feedback_buttons(request_id)

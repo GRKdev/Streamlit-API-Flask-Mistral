@@ -2,16 +2,20 @@ import os
 import streamlit as st
 import requests
 import openai
+from openai import OpenAI
 from utils.sidebar_info import display_sidebar_info, display_main_info
 from utils.lakera_guard import LakeraGuard
 
 from utils.chatbot_utils import (
     handle_chat_message,
     handle_gpt_ft_message,
+    handle_langchain_response,
     ask_fine_tuned_api,
 )
 
 lakera_guard_api_key = st.secrets.get("LAKERA_API", os.getenv("LAKERA_API"))
+
+client = OpenAI()
 
 
 def chat_bot(username=None):
@@ -80,6 +84,15 @@ def chat_bot(username=None):
 
         if (len(user_input) == 12 or len(user_input) == 13) and user_input.isdigit():
             api_response_url = f"/api/art?bar={user_input}"
+
+        elif user_input.startswith("DOC ") or user_input.startswith("doc "):
+            with st.chat_message("DOC", avatar="📝"):
+                message_placeholder = st.empty()
+                handle_langchain_response(
+                    user_input,
+                    message_placeholder,
+                )
+            return
         else:
             api_response_url = ask_fine_tuned_api(user_input)
 

@@ -48,7 +48,7 @@ def display_sidebar_info():
     if st.sidebar.button("Cerrar sesión"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.experimental_rerun()
+        st.rerun()
 
     if user == "admin" or user == "direccio":
         option = st.sidebar.selectbox(
@@ -164,6 +164,8 @@ def display_main_info():
         - 🛒 **Artículos**: Consultar detalles de artículos, incluyendo precios y stock.
         - 🧾 **Albaranes**: Obtener información sobre albaranes específicos.
         - 📊 **Finanzas**: Consultas de facturación e ingresos de la empresa y cliente, este resultado se realiza sin pasar por GPT-3.5, directo de la API.
+        -
+        - 📝 Buscar en la documentación de la empresa. Para activar empezar conversación con *DOC*, *doc* o *" ! "*
 
         ⬅️ **Ejemplos de preguntas** que puedes hacer se encuentran en el menú de la izquierda.
         """
