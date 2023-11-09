@@ -34,8 +34,12 @@ def chat_bot(username=None):
         )
 
     for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        role = message["role"]
+        content = message["content"]
+        avatar = message.get("avatar")
+
+        with st.chat_message(role, avatar=avatar):  # Pass the avatar here
+            st.markdown(content)
 
     lakera_guard = LakeraGuard(lakera_guard_api_key)
     user_input = st.chat_input("Ingresa tu pregunta:")

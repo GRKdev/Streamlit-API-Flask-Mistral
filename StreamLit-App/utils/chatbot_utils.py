@@ -344,7 +344,7 @@ def ask_langchain(prompt, placeholder):
         search_type="similarity",
         search_kwargs={"k": 1},
     )
-    # request_id = str(uuid.uuid4())
+    request_id = str(uuid.uuid4())
 
     prompt_template = f"""
     Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
@@ -360,38 +360,46 @@ def ask_langchain(prompt, placeholder):
     PROMPT = PromptTemplate(
         template=prompt_template, input_variables=["context", "question"]
     )
+    custom_headers = {
+        "Helicone-Auth": HELICONE_AUTH,
+        "Helicone-Property-Session": HELICONE_SESSION,
+        "Helicone-Request-Id": request_id,
+    }
+    llm = ChatOpenAI(
+        model="gpt-3.5-turbo-1106",
+        streaming=True,
+        callbacks=[StreamlitCallbackHandler(placeholder)],
+        temperature=0,
+        openai_api_base="https://oai.hconeai.com/v1",
+        # openai_api_base="http://localhost:1234/v1",
+        default_headers=custom_headers,
+    )
 
     qa = RetrievalQA.from_chain_type(
-        llm=ChatOpenAI(
-            model="gpt-3.5-turbo-1106",
-            streaming=True,
-            callbacks=[StreamlitCallbackHandler(placeholder)],
-            temperature=0,
-            openai_api_base="https://oai.hconeai.com/v1",
-            # openai_api_base="http://localhost:1234/v1",
-            # headers={
-            #     "Helicone-Auth": HELICONE_AUTH,
-            #     "Helicone-Property-Session": HELICONE_SESSION,
-            #     "Helicone-Request-Id": request_id,
-            # },
-        ),
+        llm=llm,
         chain_type="stuff",
         retriever=qa_retriever,
         chain_type_kwargs={"prompt": PROMPT},
     )
+
     response = qa(prompt)
 
-    return (response,)
+    return response, request_id
 
 
 def handle_langchain_response(user_input, message_placeholder):
     message_placeholder.empty()
-    response = ask_langchain(user_input, message_placeholder)
+    response, request_id = ask_langchain(user_input, message_placeholder)
+    print(type(response))
+    print(response)
     response_content = response["result"]
 
     st.markdown(
         f"<div style='text-align:right; color:yellow; font-size:small;'>📝 Modelo: Documentación LangChain. Los datos pueden ser erróneos.</div>",
         unsafe_allow_html=True,
     )
-    st.session_state.chat_history.append({"role": "DOC", "content": response_content})
-    # display_feedback_buttons(request_id)
+    st.session_state.chat_history.append(
+        {"role": "DOC", "content": response_content, "avatar": "📝"}
+    )
+
+    display_feedback_buttons(request_id)
