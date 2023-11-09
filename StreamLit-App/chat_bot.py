@@ -89,14 +89,16 @@ def chat_bot(username=None):
         if (len(user_input) == 12 or len(user_input) == 13) and user_input.isdigit():
             api_response_url = f"/api/art?bar={user_input}"
 
-        elif user_input.startswith("DOC ") or user_input.startswith("doc "):
+        elif user_input.lower().startswith("doc "):
             with st.chat_message("DOC", avatar="📝"):
-                message_placeholder = st.empty()
-                handle_langchain_response(
-                    user_input,
-                    message_placeholder,
-                )
-            return
+                with st.spinner("Recuperando documento..."):
+                    message_placeholder = st.empty()
+                    handle_langchain_response(
+                        user_input,
+                        message_placeholder,
+                    )
+                return
+
         else:
             api_response_url = ask_fine_tuned_api(user_input)
 

@@ -119,14 +119,14 @@ def ask_gpt(prompt, placeholder, additional_context=None):
     full_response = ""
 
     request_id = str(uuid.uuid4())
-
-    openai.base_url = "https://oai.hconeai.com/v1"
-    openai.default_headers = {
-        "Helicone-Auth": HELICONE_AUTH,
-        "Helicone-Property-Session": HELICONE_SESSION,
-        "Helicone-Request-Id": request_id,
-    }
-    stream = openai.chat.completions.create(
+    # openai.api_base = ("http://localhost:1234/v1",)
+    # openai.base_url = "https://oai.hconeai.com/v1"
+    # openai.default_headers = {
+    #     "Helicone-Auth": HELICONE_AUTH,
+    #     "Helicone-Property-Session": HELICONE_SESSION,
+    #     "Helicone-Request-Id": request_id,
+    # }
+    stream = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         # model="local-mode",
         messages=messages_list,
@@ -390,8 +390,7 @@ def ask_langchain(prompt, placeholder):
 def handle_langchain_response(user_input, message_placeholder):
     message_placeholder.empty()
     response, request_id = ask_langchain(user_input, message_placeholder)
-    print(type(response))
-    print(response)
+
     response_content = response["result"]
 
     st.markdown(
