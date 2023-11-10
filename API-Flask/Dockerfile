@@ -9,7 +9,7 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 # Expone el puerto 8080
-EXPOSE 8080
+EXPOSE 8181
 
 # Comando para ejecutar gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "--reload", "main:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8181", "--reload", "main:app"]

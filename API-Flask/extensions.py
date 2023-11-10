@@ -3,9 +3,7 @@ import logging
 import jwt
 import os
 from functools import wraps
-from dotenv import load_dotenv
 
-load_dotenv()
 
 SECRET_KEYS = os.environ["SECRET_KEYS"].split(",")
 

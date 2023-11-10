@@ -3,3 +3,4 @@ __pycache__/
 docker-compose.yml
 
 .env
+docker-compose-2.yml

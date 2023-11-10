@@ -52,11 +52,28 @@ def display_sidebar_info():
 
     if user == "admin" or user == "direccio":
         option = st.sidebar.selectbox(
-            " ", ("Ejemplos", "Clientes", "Artículos", "Albaranes", "Finanzas", "Otros")
+            " ",
+            (
+                "Ejemplos",
+                "Clientes",
+                "Artículos",
+                "Albaranes",
+                "Finanzas",
+                "Documentación",
+                "Otros",
+            ),
         )
     else:
         option = st.sidebar.selectbox(
-            " ", ("Ejemplos", "Clientes", "Artículos", "Albaranes", "Otros")
+            " ",
+            (
+                "Ejemplos",
+                "Clientes",
+                "Artículos",
+                "Albaranes",
+                "Documentación",
+                "Otros",
+            ),
         )
 
     if option == "Clientes":
@@ -130,6 +147,17 @@ def display_sidebar_info():
         for line in lineas:
             st.sidebar.markdown(f"```markdown\n{line}\n```")
 
+    elif option == "Documentación":
+        lineas = [
+            "DOC Dame la operativa de llamadas enumerando puntos",
+            "doc Hazme resumen del chatbot",
+            "Doc hazme una plantilla de email de problema de conexión",
+            "doc ¿Quál es la operativa para responder un email?",
+            "doc como se llama el programa de ticketing? enumera los puntos de como utilizarlo",
+        ]
+
+        for line in lineas:
+            st.sidebar.markdown(f"```markdown\n{line}\n```")
     elif option == "Otros":
         lineas = [
             "¿Qué es iand.dev?",
@@ -165,7 +193,7 @@ def display_main_info():
         - 🧾 **Albaranes**: Obtener información sobre albaranes específicos.
         - 📊 **Finanzas**: Consultas de facturación e ingresos de la empresa y cliente, este resultado se realiza sin pasar por GPT-3.5, directo de la API.
         -
-        - 📝 Buscar en la documentación de la empresa. Para activar empezar conversación con *DOC*, *doc* o *" ! "*
+        - 📝 Buscar en la documentación de la empresa. Para activar empezar conversación con *DOC*, *doc* o *" ! "* Ejemplo: DOC Dame la operativa de llamadas enumerando puntos.
 
         ⬅️ **Ejemplos de preguntas** que puedes hacer se encuentran en el menú de la izquierda.
         """

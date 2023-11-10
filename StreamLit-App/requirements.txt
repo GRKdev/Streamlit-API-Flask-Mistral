@@ -2,4 +2,6 @@ openai
 streamlit
 streamlit_echarts
 PyJWT
-streamlit_feedback
+langchain
+pymongo
+tiktoken

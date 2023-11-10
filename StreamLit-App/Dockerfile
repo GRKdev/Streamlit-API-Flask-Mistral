@@ -1,7 +1,7 @@
 FROM python:3.11-slim-buster
 ENV HOST=0.0.0.0
 ENV LISTEN_PORT 8083
-EXPOSE 8082
+EXPOSE 8083
 
 COPY . /app
 
