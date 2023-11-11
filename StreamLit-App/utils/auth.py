@@ -18,6 +18,7 @@ def check_password():
     def login_form():
         logo = Image.open("IMG/logo.png")
         logo_iand = Image.open("IMG/logo-dark.png")
+
         st.markdown(
             f'<div style="text-align: center"><img src="data:image/png;base64,{image_to_base64(logo)}" style="width:150px;"></div>',
             unsafe_allow_html=True,
@@ -36,7 +37,7 @@ def check_password():
         logo_grk = Image.open("IMG/grk_logo.png")
 
         st.markdown(
-            f'<h6 style="text-align: center">Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="12">&nbsp by &nbsp<a href="https://github.com/GRKdev/StreamLit-Api"><img src="data:image/png;base64,{image_to_base64(logo_grk)}" alt="GRK" height="16"&nbsp</a></h6>',
+            f'<h6 style="text-align: center">Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="12">&nbsp by &nbsp<a href="https://iand.dev"><img src="data:image/png;base64,{image_to_base64(logo_iand)}" alt="GRK" height="16"&nbsp</a></h6>',
             unsafe_allow_html=True,
         )
 
@@ -48,6 +49,7 @@ def check_password():
             st.session_state["password_correct"] = True
             st.session_state["user"] = username
             st.session_state["token"] = token_manager.get_token(username)
+            st.experimental_rerun()
         else:
             st.session_state["password_correct"] = False
             st.error("Usuario desconocido o Contraseña incorrecta.", icon="⚠️")

@@ -22,8 +22,6 @@ from utils.chart_utils import (
 from pymongo import MongoClient
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import MongoDBAtlasVectorSearch
-
-# from langchain.llms import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain.callbacks.base import BaseCallbackHandler
@@ -40,9 +38,6 @@ model_name = st.secrets["OPENAI_MODEL_35"].split(":")[3].upper()
 HELICONE_AUTH = st.secrets.get("HELICONE_AUTH", os.getenv("HELICONE_AUTH"))
 
 last_assistant_response = None
-
-client = OpenAI()
-
 
 # def set_api_base(ask_name):
 #     if ask_name == "ask_fine_tuned":
@@ -61,12 +56,7 @@ client = OpenAI()
 
 def ask_fine_tuned_api(prompt):
     # set_api_base("ask_fine_tuned")
-
-    HELICONE_SESSION = (
-        st.session_state["user"].title()
-        + "-"
-        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
-    )
+    client = OpenAI()
 
     response = client.completions.create(
         model=OPEN_AI_MODEL,
@@ -75,10 +65,6 @@ def ask_fine_tuned_api(prompt):
         n=1,
         stop="&&",
         temperature=0,
-        # headers={
-        #     "Helicone-Auth": HELICONE_AUTH,
-        #     "Helicone-Property-Session": HELICONE_SESSION,
-        # },
     )
     api_response = response.choices[0].text.strip()
 
@@ -94,6 +80,7 @@ def ask_fine_tuned_api(prompt):
 
 def ask_gpt(prompt, placeholder, additional_context=None):
     # set_api_base("ask_gpt")
+    client = OpenAI()
     user_program = st.session_state["user"].title()
     HELICONE_SESSION = (
         user_program
@@ -105,7 +92,7 @@ def ask_gpt(prompt, placeholder, additional_context=None):
     messages_list = [
         {
             "role": "system",
-            "content": "Eres un conector que proporciona información interna de una DB a los usuarios de la empresa. Eres directo y conciso, contestarás en el mismo lenguaje del user. Recibirás una pregunta del User y datos obtenidos de una base de datos. Usarás fuentes para ofrecer una respuesta en formato BULLET POINTS. Proporcionarás una respuesta clara, coherente y útil. Precios en € (ex: 150 €)",
+            "content": "Eres un conector que proporciona información interna de una DB a los usuarios de la empresa. Eres directo y conciso, contestarás en el mismo idioma del usuario. Recibirás una pregunta del User y datos obtenidos de una base de datos. Usarás las fuentes para ofrecer una respuesta en formato BULLET POINTS. Proporcionarás una respuesta clara, coherente y útil. Precios en € (ex: 150 €)",
         },
     ]
     if additional_context:
@@ -120,13 +107,13 @@ def ask_gpt(prompt, placeholder, additional_context=None):
 
     request_id = str(uuid.uuid4())
     # openai.api_base = ("http://localhost:1234/v1",)
-    # openai.base_url = "https://oai.hconeai.com/v1"
-    # openai.default_headers = {
-    #     "Helicone-Auth": HELICONE_AUTH,
-    #     "Helicone-Property-Session": HELICONE_SESSION,
-    #     "Helicone-Request-Id": request_id,
-    # }
-    stream = client.chat.completions.create(
+    openai.base_url = "https://oai.hconeai.com/v1/"
+    openai.default_headers = {
+        "Helicone-Auth": HELICONE_AUTH,
+        "Helicone-Property-Session": HELICONE_SESSION,
+        "Helicone-Request-Id": request_id,
+    }
+    stream = openai.chat.completions.create(
         model="gpt-3.5-turbo-1106",
         # model="local-mode",
         messages=messages_list,
@@ -149,7 +136,6 @@ def ask_gpt(prompt, placeholder, additional_context=None):
 
 
 def ask_gpt_ft(prompt, placeholder, additional_context=None):
-    # set_api_base("ask_gpt_ft")
     HELICONE_SESSION = (
         st.session_state["user"].title()
         + "-"
@@ -183,8 +169,14 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
 
     full_response = ""
     request_id = str(uuid.uuid4())
-
-    stream = client.chat.completions.create(
+    # openai.api_base = ("http://localhost:1234/v1",)
+    openai.base_url = "https://oai.hconeai.com/v1/"
+    openai.default_headers = {
+        "Helicone-Auth": HELICONE_AUTH,
+        "Helicone-Property-Session": HELICONE_SESSION,
+        "Helicone-Request-Id": request_id,
+    }
+    stream = openai.chat.completions.create(
         model=OPENAI_MODEL_35,
         messages=messages_list,
         max_tokens=1000,
@@ -200,7 +192,7 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
     placeholder.markdown(full_response)
     last_assistant_response = full_response.strip()
 
-    return last_assistant_response
+    return last_assistant_response, request_id
 
 
 def generate_response_from_mongo_results(data):
@@ -295,7 +287,7 @@ def handle_gpt_ft_message(
     additional_context = {
         "api_error": response.json()["error"] if "api/" in api_response_url else None,
     }
-    gpt_response = ask_gpt_ft(
+    gpt_response, request_id = ask_gpt_ft(
         user_input, message_placeholder, additional_context=additional_context
     )
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_response})
@@ -303,7 +295,7 @@ def handle_gpt_ft_message(
         f"<div style='text-align:right; color:red; font-size:small;'>⚠️ Modelo: GPT-3.5-{model_name}. Los datos pueden ser erróneos.</div>",
         unsafe_allow_html=True,
     )
-    # display_feedback_buttons(request_id)
+    display_feedback_buttons(request_id)
 
 
 class StreamlitCallbackHandler(BaseCallbackHandler):
@@ -323,8 +315,8 @@ def ask_langchain(prompt, placeholder):
         + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
     )
     client = MongoClient(st.secrets.get("MONGO_URI"))
-    dbName = "langchain"
-    collectionName = "collection_of_text_blobs"
+    dbName = "default_db"
+    collectionName = "default_collection"
     try:
         # This line checks if you can connect to the MongoDB database
         client.server_info()
@@ -348,8 +340,8 @@ def ask_langchain(prompt, placeholder):
 
     prompt_template = f"""
     Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
-    Darás una respuesta clara y concisa con la información del contexto (context) y la pregunta (question) del usuario. No usarás fuentes externas, si no
-    sabes la respuesta, contesta "No lo sé" educadamente. Si necesitan más ayuda el email de soporte es: suport@iand.dev.
+    Darás una respuesta clara y concisa en formato lista, con la información del contexto (context) y la pregunta (question) del usuario. No usarás fuentes externas, si no
+    sabes la respuesta, contesta "No lo sé". Si necesitan más ayuda el email de contacto es: "suport@iand.dev".
 
     Context: {{context}}
 

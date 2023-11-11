@@ -30,7 +30,7 @@ def chat_bot(username=None):
 
     if not st.session_state.chat_history:
         st.session_state.chat_history.append(
-            {"role": "assistant", "content": "¡Empezemos a chatear!"}
+            {"role": "assistant", "content": "¡Hola, empezemos a chatear!"}
         )
 
     for message in st.session_state.chat_history:
@@ -38,7 +38,7 @@ def chat_bot(username=None):
         content = message["content"]
         avatar = message.get("avatar")
 
-        with st.chat_message(role, avatar=avatar):  # Pass the avatar here
+        with st.chat_message(role, avatar=avatar):
             st.markdown(content)
 
     lakera_guard = LakeraGuard(lakera_guard_api_key)
@@ -89,7 +89,7 @@ def chat_bot(username=None):
         if (len(user_input) == 12 or len(user_input) == 13) and user_input.isdigit():
             api_response_url = f"/api/art?bar={user_input}"
 
-        elif user_input.lower().startswith("doc "):
+        elif user_input.lower().startswith("doc ") or user_input.startswith("!"):
             with st.chat_message("DOC", avatar="📝"):
                 with st.spinner("Recuperando documento..."):
                     message_placeholder = st.empty()

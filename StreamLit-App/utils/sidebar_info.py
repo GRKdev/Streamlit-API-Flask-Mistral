@@ -27,7 +27,7 @@ def footer():
     logo_grk = Image.open("IMG/grk_logo.png")
     st.sidebar.divider()
     st.sidebar.markdown(
-        f'<h6 style="text-align: center">Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="12">&nbsp by &nbsp<a href="https://github.com/GRKdev/StreamLit-Api"><img src="data:image/png;base64,{image_to_base64(logo_grk)}" alt="GRK" height="16"&nbsp</a></h6>',
+        f'<h6 style="text-align: center">Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="12">&nbsp by &nbsp<a href="https://github.com/GRKdev"><img src="data:image/png;base64,{image_to_base64(logo_grk)}" alt="GRK" height="16"&nbsp</a></h6>',
         unsafe_allow_html=True,
     )
 
@@ -79,13 +79,13 @@ def display_sidebar_info():
     if option == "Clientes":
         lines = [
             "Dona'm info del client GRK",
-            "telefono Maria Lopez",
+            "telefono Maria López",
             "tlf de clientes GRK y Pepito",
             "Toda info cliente John Doe",
             "¿De quién es el tlf 955555555?",
             "Email de Global Data",
             "Quién es el cliente Pedro Muñoz?",
-            "¿Cómo puedo contactar con Ana Belen?",
+            "Cómo puedo contactar con Gorka Vilar",
             "Adreça de Andorra Telecom",
             "El teléfono 941123456 ¿De quién es?",
             "info de clientes Telecom y Ultra Tech",
@@ -150,10 +150,13 @@ def display_sidebar_info():
     elif option == "Documentación":
         lineas = [
             "DOC Dame la operativa de llamadas enumerando puntos",
-            "doc Hazme resumen del chatbot",
+            "!Hazme resumen del chatbot",
             "Doc hazme una plantilla de email de problema de conexión",
             "doc ¿Quál es la operativa para responder un email?",
-            "doc como se llama el programa de ticketing? enumera los puntos de como utilizarlo",
+            "!como se llama el programa de ticketing? enumera los puntos de como utilizarlo",
+            "! qual es el roadmap del proyecto, que se ha cumplido y que no?",
+            "!¿Qué podemos hacer con el chatbot?",
+            "!Operativa flujo de trabajo con emails porfavor",
         ]
 
         for line in lineas:
@@ -185,15 +188,14 @@ def display_main_info():
         """
         #### **Bienvenido al chatbot de IAND**
 
-        Este chatbot inteligente te permite hacer consultas directas con lenguaje natural a nuestra base de datos de MongoDB.
+        Este chatbot inteligente te permite hacer consultas directas con lenguaje natural a nuestra base de datos de MongoDB y en la documentación de la empresa.
 
         ##### ¿Qué puedes hacer?
         - 👤 **Clientes**: Buscar información detallada de clientes.
         - 🛒 **Artículos**: Consultar detalles de artículos, incluyendo precios y stock.
         - 🧾 **Albaranes**: Obtener información sobre albaranes específicos.
         - 📊 **Finanzas**: Consultas de facturación e ingresos de la empresa y cliente, este resultado se realiza sin pasar por GPT-3.5, directo de la API.
-        -
-        - 📝 Buscar en la documentación de la empresa. Para activar empezar conversación con *DOC*, *doc* o *" ! "* Ejemplo: DOC Dame la operativa de llamadas enumerando puntos.
+        - 📝 **Documentación**: Buscar en la documentación de la empresa. Para activar empezar la conversación con **DOC**, **doc** o **!**.
 
         ⬅️ **Ejemplos de preguntas** que puedes hacer se encuentran en el menú de la izquierda.
         """
