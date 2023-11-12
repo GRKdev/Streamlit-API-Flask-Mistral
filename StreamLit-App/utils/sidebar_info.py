@@ -154,7 +154,7 @@ def display_sidebar_info():
             "Doc hazme una plantilla de email de problema de conexión",
             "doc ¿Quál es la operativa para responder un email?",
             "!como se llama el programa de ticketing? enumera los puntos de como utilizarlo",
-            "! qual es el roadmap del proyecto, que se ha cumplido y que no?",
+            "!Roadmap del proyecto, que se ha cumplido y que no? marca con un check y dame links",
             "!¿Qué podemos hacer con el chatbot?",
             "!Operativa flujo de trabajo con emails porfavor",
         ]

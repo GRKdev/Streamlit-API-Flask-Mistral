@@ -33,6 +33,10 @@ def display_chart_and_warning(
         if key
         else st_echarts(options=options, height=height, theme=theme)
     )
+    st.session_state.chat_history.append(
+        {"role": "assistant", "content": "chart", "chart_options": options}
+    )
+
     if write_s and s is not None:
         st.write(s)
     st.markdown(

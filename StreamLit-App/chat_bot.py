@@ -5,6 +5,7 @@ import openai
 from openai import OpenAI
 from utils.sidebar_info import display_sidebar_info, display_main_info
 from utils.lakera_guard import LakeraGuard
+from streamlit_echarts import st_echarts
 
 from utils.chatbot_utils import (
     handle_chat_message,
@@ -38,8 +39,11 @@ def chat_bot(username=None):
         content = message["content"]
         avatar = message.get("avatar")
 
-        with st.chat_message(role, avatar=avatar):
-            st.markdown(content)
+        if content == "chart":
+            st_echarts(options=message["chart_options"], height="400px", theme="dark")
+        else:
+            with st.chat_message(role, avatar=avatar):
+                st.markdown(content)
 
     lakera_guard = LakeraGuard(lakera_guard_api_key)
     user_input = st.chat_input("Ingresa tu pregunta:")
