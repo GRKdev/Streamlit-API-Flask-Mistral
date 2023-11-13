@@ -96,7 +96,7 @@ def display_sidebar_info():
 
     elif option == "Artículos":
         lineas = [
-            "info article Apple",
+            "info de articulo Apple",
             "toda info articulo Razer Blackwidow",
             "Precio Venta articulo MacBook Air",
             "Info del artículo 1014",
@@ -152,9 +152,9 @@ def display_sidebar_info():
             "DOC Dame la operativa de llamadas enumerando puntos",
             "!Hazme resumen del chatbot",
             "Doc hazme una plantilla de email de problema de conexión",
-            "doc ¿Quál es la operativa para responder un email?",
-            "!como se llama el programa de ticketing? enumera los puntos de como utilizarlo",
-            "!Roadmap del proyecto, que se ha cumplido y que no? marca con un check y dame links",
+            "doc ¿Cuál es la operativa para responder un email?",
+            "!cómo se llama el programa de ticketing? enumera los puntos de como utilizarlo",
+            "!Tecnologías y Roadmap del proyecto, que se ha cumplido y que no? marca con un check y dame links",
             "!¿Qué podemos hacer con el chatbot?",
             "!Operativa flujo de trabajo con emails porfavor",
         ]
