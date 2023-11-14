@@ -6,3 +6,4 @@ langchain
 pymongo
 tiktoken
 llama-index
+pypdf
