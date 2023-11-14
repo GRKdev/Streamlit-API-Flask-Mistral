@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import os
+from utils.llamaindex import upload_to_vector, save_uploaded_files
 from utils.generate_token import TokenManager
 from PIL import Image
 import base64
@@ -40,15 +41,25 @@ def clear_chat_history():
 def display_sidebar_info():
     if "user" in st.session_state:
         user = st.session_state["user"]
-        if user == "admin" or user == "direccio":
+
+    if "user" in st.session_state:
+        user = st.session_state["user"]
+        if user == "admin":
             st.sidebar.markdown(f"👑 **Administrador**: {user.title()}")
+
+            uploaded_files = st.sidebar.file_uploader(
+                "Cargar archivos", accept_multiple_files=True
+            )
+            if uploaded_files and st.sidebar.button("Carga en Vector Store"):
+                try:
+                    file_paths = save_uploaded_files(uploaded_files)
+                    upload_to_vector(file_paths)
+                    st.sidebar.success("Carga Correcta!")
+                except Exception as e:
+                    st.sidebar.error(f"Error al cargar archivos: {e}")
+
         else:
             st.sidebar.markdown(f"**Usuari:** {user.title()}")
-
-    if st.sidebar.button("Cerrar sesión"):
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        st.rerun()
 
     if user == "admin" or user == "direccio":
         option = st.sidebar.selectbox(
@@ -179,6 +190,10 @@ def display_sidebar_info():
             st.sidebar.markdown(f"```markdown\n{line}\n```")
 
     st.sidebar.button("Borrar Historial", on_click=clear_chat_history)
+    if st.sidebar.button("Cerrar sesión"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
 
     footer()
 
