@@ -79,14 +79,9 @@ def ask_fine_tuned_api(prompt):
 
 
 def ask_gpt(prompt, placeholder, additional_context=None):
-    # set_api_base("ask_gpt")
-    client = OpenAI()
+    HELICONE_SESSION = st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
     user_program = st.session_state["user"].title()
-    HELICONE_SESSION = (
-        user_program
-        + "-"
-        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
-    )
+
     global last_assistant_response
 
     messages_list = [
@@ -112,6 +107,7 @@ def ask_gpt(prompt, placeholder, additional_context=None):
         "Helicone-Auth": HELICONE_AUTH,
         "Helicone-Property-Session": HELICONE_SESSION,
         "Helicone-Request-Id": request_id,
+        "Helicone-User-Id": user_program,
     }
     stream = openai.chat.completions.create(
         model="gpt-3.5-turbo-1106",
@@ -136,11 +132,9 @@ def ask_gpt(prompt, placeholder, additional_context=None):
 
 
 def ask_gpt_ft(prompt, placeholder, additional_context=None):
-    HELICONE_SESSION = (
-        st.session_state["user"].title()
-        + "-"
-        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
-    )
+    HELICONE_SESSION = st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    user_program = st.session_state["user"].title()
+
     global last_assistant_response
     messages_list = [
         {
@@ -175,6 +169,7 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
         "Helicone-Auth": HELICONE_AUTH,
         "Helicone-Property-Session": HELICONE_SESSION,
         "Helicone-Request-Id": request_id,
+        "Helicone-User-Id": user_program,
     }
     stream = openai.chat.completions.create(
         model=OPENAI_MODEL_35,
@@ -309,11 +304,8 @@ class StreamlitCallbackHandler(BaseCallbackHandler):
 
 
 def ask_langchain(prompt, placeholder):
-    HELICONE_SESSION = (
-        st.session_state["user"].title()
-        + "-"
-        + st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
-    )
+    HELICONE_SESSION = st.secrets.get("HELICONE_SESSION", os.getenv("HELICONE_SESSION"))
+    user_program = st.session_state["user"].title()
     client = MongoClient(st.secrets.get("MONGO_URI"))
     dbName = "default_db"
     collectionName = "default_collection"
@@ -356,6 +348,7 @@ def ask_langchain(prompt, placeholder):
         "Helicone-Auth": HELICONE_AUTH,
         "Helicone-Property-Session": HELICONE_SESSION,
         "Helicone-Request-Id": request_id,
+        "Helicone-User-Id": user_program,
     }
     llm = ChatOpenAI(
         model="gpt-3.5-turbo-1106",
