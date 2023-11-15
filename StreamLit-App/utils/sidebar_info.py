@@ -48,7 +48,9 @@ def display_sidebar_info():
             st.sidebar.markdown(f"👑 **Administrador**: {user.title()}")
 
             uploaded_files = st.sidebar.file_uploader(
-                "Cargar archivos", accept_multiple_files=True
+                "Cargar archivos Documentación (Vector)",
+                accept_multiple_files=True,
+                type=["pdf", "docx", "doc", "txt", "md"],
             )
             if uploaded_files and st.sidebar.button("Carga en Vector Store"):
                 try:
@@ -168,6 +170,7 @@ def display_sidebar_info():
             "!Tecnologías y Roadmap del proyecto, que se ha cumplido y que no? marca con un check y dame links",
             "!¿Qué podemos hacer con el chatbot?",
             "!Operativa flujo de trabajo con emails porfavor",
+            "!Dame la plantilla acuerdo comercial",
         ]
 
         for line in lineas:
@@ -190,6 +193,7 @@ def display_sidebar_info():
             st.sidebar.markdown(f"```markdown\n{line}\n```")
 
     st.sidebar.button("Borrar Historial", on_click=clear_chat_history)
+
     if st.sidebar.button("Cerrar sesión"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]

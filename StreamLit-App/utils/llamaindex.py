@@ -14,9 +14,7 @@ def save_uploaded_files(uploaded_files):
     saved_paths = []
 
     for uploaded_file in uploaded_files:
-        # Create a file path in the temp folder
         file_path = os.path.join(temp_folder, uploaded_file.name)
-        # Write the uploaded file to the new file path
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
         saved_paths.append(file_path)
