@@ -23,9 +23,14 @@ from pymongo import MongoClient
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import MongoDBAtlasVectorSearch
 from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain.prompts import ChatPromptTemplate
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chat_models import ChatOpenAI
+from langchain.prompts import (
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+)
 
 
 OPEN_AI_MODEL = st.secrets.get("OPENAI_MODEL", os.getenv("OPENAI_MODEL"))
@@ -39,23 +44,8 @@ HELICONE_AUTH = st.secrets.get("HELICONE_AUTH", os.getenv("HELICONE_AUTH"))
 
 last_assistant_response = None
 
-# def set_api_base(ask_name):
-#     if ask_name == "ask_fine_tuned":
-#         openai.api_base = "https://oai.hconeai.com/v1"
-
-#     elif ask_name == "ask_gpt":
-#         openai.api_base = "https://oai.hconeai.com/v1"
-#         # openai.api_base = "http://localhost:1234/v1"
-
-#     elif ask_name == "ask_gpt_ft":
-#         openai.api_base = "http://localhost:1234/v1"
-
-#     elif ask_name == "ask_langchain":
-#         openai.api_base = "http://localhost:1234/v1"
-
 
 def ask_fine_tuned_api(prompt):
-    # set_api_base("ask_fine_tuned")
     client = OpenAI()
 
     response = client.completions.create(
@@ -163,7 +153,7 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
 
     full_response = ""
     request_id = str(uuid.uuid4())
-    # openai.api_base = ("http://localhost:1234/v1",)
+    # openai.base_url = "http://192.168.1.51:1234/v1/"
     openai.base_url = "https://oai.hconeai.com/v1/"
     openai.default_headers = {
         "Helicone-Auth": HELICONE_AUTH,
@@ -278,7 +268,6 @@ def handle_chat_message(api_response_url, data, message_placeholder, user_input)
 def handle_gpt_ft_message(
     user_input, message_placeholder, api_response_url, response=None
 ):
-    # json_api = str(response.json())
     additional_context = {
         "api_error": response.json()["error"] if "api/" in api_response_url else None,
     }
@@ -310,11 +299,10 @@ def ask_langchain(prompt, placeholder):
     dbName = "default_db"
     collectionName = "default_collection"
     try:
-        # This line checks if you can connect to the MongoDB database
         client.server_info()
     except Exception as e:
         print("There was an error connecting to MongoDB:", e)
-        return None  # or handle the error as appropriate for your application
+        return None
 
     collection = client[dbName][collectionName]
 
@@ -326,24 +314,25 @@ def ask_langchain(prompt, placeholder):
 
     qa_retriever = vectorstore.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 1},
+        search_kwargs={"k": 2},
     )
     request_id = str(uuid.uuid4())
 
-    prompt_template = f"""
-    Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
-    Darás una respuesta clara y concisa en formato lista, con la información del contexto (context) y la pregunta (question) del usuario. No usarás fuentes externas, si no
-    sabes la respuesta, contesta "No lo sé". Si necesitan más ayuda el email de contacto es: "suport@iand.dev".
+    template = """Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
+    Darás una respuesta clara y concisa en formato lista. No usarás fuentes externas, si no sabes la respuesta, contesta No lo sé.
+    Si necesitan más ayuda el email de contacto es: 'suport@iand.dev' <- No traduzcas el email."""
 
-    Context: {{context}}
+    system_message_prompt = SystemMessagePromptTemplate.from_template(template)
 
-    Question: {{question}}
+    human_template = "{question}"
+    human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+    context_template = "{context}"
+    context_message_prompt = AIMessagePromptTemplate.from_template(context_template)
 
-    Answer: 
-    """
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
+    chat_prompt = ChatPromptTemplate.from_messages(
+        [system_message_prompt, context_message_prompt, human_message_prompt]
     )
+
     custom_headers = {
         "Helicone-Auth": HELICONE_AUTH,
         "Helicone-Property-Session": HELICONE_SESSION,
@@ -364,7 +353,7 @@ def ask_langchain(prompt, placeholder):
         llm=llm,
         chain_type="stuff",
         retriever=qa_retriever,
-        chain_type_kwargs={"prompt": PROMPT},
+        chain_type_kwargs={"prompt": chat_prompt},
     )
 
     response = qa(prompt)
