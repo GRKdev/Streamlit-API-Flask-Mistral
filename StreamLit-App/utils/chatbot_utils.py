@@ -133,7 +133,7 @@ def ask_gpt_ft(prompt, placeholder, additional_context=None):
         },
         {
             "role": "system",
-            "content": "Si obtienes 'error' formula una respuesta en base al error y el promp del User. Si te piden más informació aporta lo que tú también sepas en tu conocimiento. el email de soporte es: suport@iand.dev",
+            "content": "Si obtienes 'error' formula una respuesta en base al error y el promp del User. Si te piden más informació aporta lo que tú también sepas en tu conocimiento. el email de soporte es: info@iand.dev",
         },
     ]
     if last_assistant_response:
@@ -320,7 +320,7 @@ def ask_langchain(prompt, placeholder):
 
     template = """Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
     Darás una respuesta clara y concisa en formato lista. No usarás fuentes externas, si no sabes la respuesta, contesta No lo sé.
-    Si necesitan más ayuda el email de contacto es: 'suport@iand.dev' <- No traduzcas el email."""
+    Si necesitan más ayuda el email de contacto es: 'info@iand.dev' <- No traduzcas el email."""
 
     system_message_prompt = SystemMessagePromptTemplate.from_template(template)
 
