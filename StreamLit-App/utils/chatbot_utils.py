@@ -320,7 +320,7 @@ def ask_langchain(prompt, placeholder):
 
     template = """Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
     Darás una respuesta clara y concisa en formato lista. No usarás fuentes externas, si no sabes la respuesta, contesta No lo sé.
-    Si necesitan más ayuda el email de contacto es: 'info@iand.dev' <- No traduzcas el email."""
+    Si necesitan más ayuda el email de contacto es: info@iand.dev"""
 
     system_message_prompt = SystemMessagePromptTemplate.from_template(template)
 
