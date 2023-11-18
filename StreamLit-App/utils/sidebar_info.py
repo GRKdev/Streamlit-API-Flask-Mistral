@@ -1,6 +1,4 @@
 import streamlit as st
-import requests
-import os
 from utils.llamaindex import upload_to_vector, save_uploaded_files
 from utils.generate_token import TokenManager
 from PIL import Image
