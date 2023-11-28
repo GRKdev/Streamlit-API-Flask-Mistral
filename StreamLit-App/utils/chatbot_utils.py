@@ -314,11 +314,11 @@ def ask_langchain(prompt, placeholder):
 
     qa_retriever = vectorstore.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 2},
+        search_kwargs={"k": 1},
     )
     request_id = str(uuid.uuid4())
 
-    template = """Eres un experto en la documentación de la Empresa IAND. Usa los siguientes datos para responder a la pregunta al final.
+    template = """Eres un experto en la documentación de la Empresa IAND. tienes acceso a la información. Usa el CONTEXT proporcionado para responder a la pregunta del usuario.
     Darás una respuesta clara y concisa en formato lista. No usarás fuentes externas, si no sabes la respuesta, contesta No lo sé.
     Si necesitan más ayuda el email de contacto es: info@iand.dev"""
 
@@ -326,7 +326,7 @@ def ask_langchain(prompt, placeholder):
 
     human_template = "{question}"
     human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-    context_template = "{context}"
+    context_template = "CONTEXT: {context}"
     context_message_prompt = AIMessagePromptTemplate.from_template(context_template)
 
     chat_prompt = ChatPromptTemplate.from_messages(
