@@ -34,8 +34,6 @@ def check_password():
                 if submitted:
                     password_entered(username, password)
 
-        logo_grk = Image.open("IMG/grk_logo.png")
-
         st.markdown(
             f'<h6 style="text-align: center">Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="12">&nbsp by &nbsp<a href="https://iand.dev"><img src="data:image/png;base64,{image_to_base64(logo_iand)}" alt="GRK" height="16"&nbsp</a></h6>',
             unsafe_allow_html=True,

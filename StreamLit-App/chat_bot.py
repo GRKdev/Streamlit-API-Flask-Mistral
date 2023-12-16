@@ -4,7 +4,8 @@ import requests
 import openai
 from openai import OpenAI
 from utils.sidebar_info import display_sidebar_info, display_main_info
-from utils.lakera_guard import LakeraGuard
+
+# from utils.lakera_guard import LakeraGuard
 from streamlit_echarts import st_echarts
 
 from utils.chatbot_utils import (
@@ -45,7 +46,7 @@ def chat_bot(username=None):
             with st.chat_message(role, avatar=avatar):
                 st.markdown(content)
 
-    lakera_guard = LakeraGuard(lakera_guard_api_key)
+    # lakera_guard = LakeraGuard(lakera_guard_api_key)
     user_input = st.chat_input("Ingresa tu pregunta:")
 
     if user_input:

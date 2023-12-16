@@ -4,7 +4,6 @@ from llama_index.indices.vector_store.base import VectorStoreIndex
 from llama_index.storage.storage_context import StorageContext
 from llama_index.readers.file.base import SimpleDirectoryReader
 import streamlit as st
-import shutil
 import os
 
 

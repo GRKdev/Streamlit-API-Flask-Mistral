@@ -201,7 +201,7 @@ def provide_feedback(heliconeId, rating):
     try:
         response = requests.post(url, headers=headers, data=json.dumps(data))
         response.raise_for_status()
-    except requests.RequestException as e:
+    except requests.RequestException:
         pass
 
 
@@ -368,7 +368,7 @@ def handle_langchain_response(user_input, message_placeholder):
     response_content = response["result"]
 
     st.markdown(
-        f"<div style='text-align:right; color:yellow; font-size:small;'>📝 Modelo: Documentación LangChain. Los datos pueden ser erróneos.</div>",
+        "<div style='text-align:right; color:yellow; font-size:small;'>📝 Modelo: RAG + GPT-3.5. Los datos pueden ser erróneos.</div>",
         unsafe_allow_html=True,
     )
     st.session_state.chat_history.append(
