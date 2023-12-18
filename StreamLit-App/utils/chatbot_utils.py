@@ -227,7 +227,7 @@ def default_handler(data, message_placeholder, user_input):
     )
     st.session_state.chat_history.append({"role": "assistant", "content": gpt_response})
     st.markdown(
-        f"<div style='text-align:right; color:green; font-size:small;'>✅ Modelo API: {model_name_ft}. Respuesta elaborada con base de datos y MISTRAL AI en local. Revisa el resultado.</div>",
+        f"<div style='text-align:right; color:green; font-size:small;'>✅ Modelo API: {model_name_ft}. Respuesta elaborada con base de datos y GPT-3.5. Revisa el resultado.</div>",
         unsafe_allow_html=True,
     )
 
