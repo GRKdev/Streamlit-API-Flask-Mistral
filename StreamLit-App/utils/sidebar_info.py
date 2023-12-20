@@ -176,7 +176,7 @@ def display_sidebar_info():
     elif option == "Otros":
         lineas = [
             "¿Qué es iand.dev?",
-            "Quien ha creado el chatbot?",
+            "Quién ha creado el chatbot?",
             "¿Cómo funciona este chat?",
             "Los datos son inventados?",
             "¿Cómo te conectas a la DB?",

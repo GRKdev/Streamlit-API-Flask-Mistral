@@ -5,7 +5,7 @@ import openai
 from openai import OpenAI
 from utils.sidebar_info import display_sidebar_info, display_main_info
 
-# from utils.lakera_guard import LakeraGuard
+from utils.lakera_guard import LakeraGuard
 from streamlit_echarts import st_echarts
 
 from utils.chatbot_utils import (
@@ -46,47 +46,46 @@ def chat_bot(username=None):
             with st.chat_message(role, avatar=avatar):
                 st.markdown(content)
 
-    # lakera_guard = LakeraGuard(lakera_guard_api_key)
+    lakera_guard = LakeraGuard(lakera_guard_api_key)
     user_input = st.chat_input("Ingresa tu pregunta:")
 
     if user_input:
         user_input = user_input.strip()
 
-        ## Lakera Guard for prompt injection
-        # if lakera_guard.check_prompt_injection(user_input):
-        #     st.session_state.chat_history.append(
-        #         {"role": "user", "content": user_input}
-        #     )
-        #     with st.chat_message("user"):
-        #         st.markdown(user_input)
+        # Lakera Guard for prompt injection
+        if lakera_guard.check_prompt_injection(user_input):
+            st.session_state.chat_history.append(
+                {"role": "user", "content": user_input}
+            )
+            with st.chat_message("user"):
+                st.markdown(user_input)
 
-        #     error_message = "Mensaje no permitido por motivos de seguridad.🚫"
-        #     st.session_state.chat_history.append(
-        #         {"role": "assistant", "content": error_message}
-        #     )
-        #     with st.chat_message("assistant"):
-        #         st.error(error_message, icon="⚠️")
-        #     return
-        # else:
-        #     categories, flagged = lakera_guard.check_moderation(user_input)
-        #     if flagged:
-        #         combined_error_message = lakera_guard.get_error_messages(categories)
-        #         st.session_state.chat_history.append(
-        #             {"role": "user", "content": user_input}
-        #         )
-        #         with st.chat_message("user"):
-        #             st.markdown(user_input)
+            error_message = "Mensaje no permitido por motivos de seguridad.🚫"
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": error_message}
+            )
+            with st.chat_message("assistant"):
+                st.error(error_message, icon="⚠️")
+            return
+        else:
+            categories, flagged = lakera_guard.check_moderation(user_input)
+            if flagged:
+                combined_error_message = lakera_guard.get_error_messages(categories)
+                st.session_state.chat_history.append(
+                    {"role": "user", "content": user_input}
+                )
+                with st.chat_message("user"):
+                    st.markdown(user_input)
 
-        #         error_message = f"Alerta de moderación: {combined_error_message}.🔞"
-        #         st.session_state.chat_history.append(
-        #             {"role": "assistant", "content": error_message}
-        #         )
-        #         with st.chat_message("assistant"):
-        #             st.error(error_message, icon="⚠️")
-        #         return
-        ## End of Lakera Guard ##
+                error_message = f"Alerta de moderación: {combined_error_message}.🔞"
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": error_message}
+                )
+                with st.chat_message("assistant"):
+                    st.error(error_message, icon="⚠️")
+                return
+        # End of Lakera Guard ##
 
-        # else:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
