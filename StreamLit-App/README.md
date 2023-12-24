@@ -14,9 +14,9 @@ Desarrollé un Chatbot avanzado que promueve la interacción en tiempo real y en
 - [Streamlit-Echarts](https://github.com/andfanilo/streamlit-echarts)
 - [Helicone](https://helicone.ai/)
 - [Lakera](https://lakera.ai/)
-- [Mistral-7B](https://lakera.ai/)
-
-
+- [Mistral-7B](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF)
+- [Llama-Index](https://docs.llamaindex.ai/en/stable/)
+- [Langchain](https://python.langchain.com/docs/get_started/introduction)
 
 ## Roadmap
 
@@ -29,7 +29,7 @@ Desarrollé un Chatbot avanzado que promueve la interacción en tiempo real y en
 - [x] Respuesta de GPT-3.5 Turbo Finetuned para respuestas sin resultados de la base de datos
 - [x] Feedback de las respuestas del chatbot con Helicone.
 - [x] Lakera Guard para mensajes de prompt injection y mensajes de odio/sexual.
-- [ ] Datos con embeddings (Langchain/Llama-Index) para chatear con los documentos.
+- [x] Datos con embeddings (Langchain/Llama-Index) para chatear con los documentos.
 - [ ] Creación de Agentes y Functiones personalizadas.
 
 ## Contributors
@@ -54,17 +54,20 @@ Creation of the chatbot using Streamlit. The user asks questions, and the chatbo
 - [Streamlit-Echarts](https://github.com/andfanilo/streamlit-echarts)
 - [Helicone](https://helicone.ai/)
 - [Lakera](https://lakera.ai/)
+- [Mistral-7B](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF)
+- [Llama-Index](https://docs.llamaindex.ai/en/stable/)
+- [Langchain](https://python.langchain.com/docs/get_started/introduction)
 
 ## Roadmap
 
 - [x] [Script for data preparation](https://github.com/GRKdev/Script-SQL-API): Script for training preparation.
 - [x] [Script for automatic connection and fine-tuning (new OpenAI API)](https://github.com/GRKdev/Script-SQL-API): Script for connection to OpenAI and automatic fine-tuning.
-- [x] [Flask API](https://github.com/GRKdev/api-docker-ngrok): API for connection to MongoDB database.
-- [x] [StreamLit Chatbot](https://github.com/GRKdev/StreamLit-Api): Chatbot for user interaction.
+- [x] [Flask API](https://github.com/GRKdev/Streamlit-API-Flask-Mistral): API for connection to MongoDB database.
+- [x] [StreamLit Chatbot](https://github.com/GRKdev/Streamlit-API-Flask-Mistral): Chatbot for user interaction.
 - [x] Responses with graphs: Bar, line, radar, etc. Streamlit-Echarts.
 - [x] Last question/answer context, and API errors
 - [x] GPT-3.5 Turbo Finetuned response for answers without database results
 - [x] Feedback for chatbot responses (Helicone)
 - [x] Lakera Guard for prompt injection messages and hate/sexual messages
-- [ ] Data with embeddings (Langchain/Llama-Index) for chatting with documents
+- [x] Data with embeddings (Langchain/Llama-Index) for chatting with documents
 - [ ] Creation of Agents and Custom Functions
