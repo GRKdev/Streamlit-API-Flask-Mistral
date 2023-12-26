@@ -12,8 +12,6 @@ Esta fase se centra en el desarrollo y despliegue de una API construida con Flas
 
 - **[JWT (JSON Web Tokens)](https://jwt.io/):** Para asegurar la comunicación con la API, se implementó la autenticación mediante tokens JWT que garantiza que solo las solicitudes autorizadas sean procesadas.
 
-- **[Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/):** Se utilizó Docker para contenerizar la aplicación y Docker Compose para gestionar los servicios de la aplicación y de Ngrok, facilitando el despliegue y la gestión del entorno.
-
 ## 3. Referencias a Otros Proyectos
 
 Este proyecto es una parte integral del ecosistema más amplio que incluye otras fases y aplicaciones. Para más detalles sobre cómo esta fase se integra con los demás componentes, se puede referir a:
@@ -38,8 +36,6 @@ This phase focuses on the development and deployment of an API built with Flask.
 - **[MongoDB](https://www.mongodb.com/):** The API communicates with a NoSQL MongoDB database to store and retrieve necessary data for the application's operations.
 
 - **[JWT (JSON Web Tokens)](https://jwt.io/):** To secure communication with the API, JWT token authentication was implemented, ensuring that only authorized requests are processed.
-
-- **[Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/):** Docker was used to containerize the application, and Docker Compose was used to manage the application and Ngrok services, facilitating the deployment and management of the environment.
 
 ## 3. References to Other Projects
 
