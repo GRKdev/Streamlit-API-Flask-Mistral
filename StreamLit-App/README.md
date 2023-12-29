@@ -1,8 +1,3 @@
-<p align="center">
-<img src="https://img.shields.io/github/last-commit/GRKdev/StreamLit-Api" alt="GitHub last commit" />
-<img src="https://img.shields.io/github/commit-activity/m/GRKdev/StreamLit-Api" alt="GitHub commit activity month" />
-</p>
-
 # ChatBot Streamlit API NOSQL with MISTRAL MODEL
 
 Desarrollé un Chatbot avanzado que promueve la interacción en tiempo real y en lenguaje natural con una base de datos MongoDB, facilitando el acceso a información crucial como datos de clientes, artículos, albaranes y métricas financieras. Este proyecto resalta la integración eficaz de modelos de lenguaje con datos tabulares, empleando un modelo afinado para ejecutar consultas API y proporcionar respuestas precisas mediante GPT-3.5-Turbo de OpenAI, abordando así desafíos significativos en el campo de la Inteligencia Artificial.
