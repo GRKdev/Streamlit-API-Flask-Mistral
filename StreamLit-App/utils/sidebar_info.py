@@ -168,7 +168,7 @@ def display_sidebar_info():
             "!Tecnologías y Roadmap del proyecto. marca con un check y dame links",
             "!¿Qué podemos hacer con el chatbot?",
             "!Procedimiento Gestión de Emails de Clientes y Creación de Tickets",
-            "!Dame la plantilla acuerdo comercial",
+            "!Dame la plantilla acuerdo comercial.",
         ]
 
         for line in lineas:
