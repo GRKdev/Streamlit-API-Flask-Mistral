@@ -1,1 +1,1 @@
-![Chatbot](StreamLit-App\IMG\logo.png)
+![Chatbot](chatbot.jpeg)
