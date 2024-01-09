@@ -7,13 +7,13 @@ st.set_page_config(
     page_icon="IMG/favicon.ico",
     layout="wide",
     initial_sidebar_state="expanded",
-    menu_items={"About": "# **GRKdev** v1.1"},
+    menu_items={"About": "# **GRKdev** v1.2.0"},
 )
 
 if not check_password():
     st.stop()
 
-from chat_bot import chat_bot
+from chat_bot import chat_bot  # noqa: E402
 
 if "user" in st.session_state and st.session_state["user"]:
     logo()
