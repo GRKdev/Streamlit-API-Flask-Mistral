@@ -138,10 +138,19 @@ def chat_bot(username=None):
 
             if response and response.status_code == 200:
                 data = response.json()
+                st.markdown(
+                    f"<div style='text-align:right; color:white; font-size:small;'>API: {api_response_url}</div>",
+                    unsafe_allow_html=True,
+                )
                 handle_chat_message(
                     api_response_url, data, message_placeholder, user_input
                 )
+
             else:
+                st.markdown(
+                    f"<div style='text-align:right; color:white; font-size:small;'>API: {api_response_url}</div>",
+                    unsafe_allow_html=True,
+                )
                 handle_gpt_ft_message(
                     user_input,
                     message_placeholder,
