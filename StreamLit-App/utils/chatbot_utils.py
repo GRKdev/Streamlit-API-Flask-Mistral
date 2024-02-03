@@ -100,7 +100,7 @@ def ask_gpt(prompt, placeholder, additional_context=None):
         "Helicone-User-Id": user_program,
     }
     stream = openai.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
+        model="gpt-3.5-turbo-0125",
         # model="local-mode",
         messages=messages_list,
         max_tokens=1000,
@@ -340,7 +340,7 @@ def ask_langchain(prompt, placeholder):
         "Helicone-User-Id": user_program,
     }
     llm = ChatOpenAI(
-        model="gpt-3.5-turbo-1106",
+        model="gpt-3.5-turbo-0125",
         streaming=True,
         callbacks=[StreamlitCallbackHandler(placeholder)],
         temperature=0,
